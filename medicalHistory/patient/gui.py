@@ -13,7 +13,7 @@ class Frame(tk.Frame):
 
     def __init__(self, root):
 
-        super().__init__(root,width= 1280, height=720)
+        super().__init__(root)
         self.root = root
         self.pack()
         self.config(bg=pink)
@@ -53,52 +53,92 @@ class Frame(tk.Frame):
         self.label_background.config(config)
         self.label_background.grid(column = 0, row = 7, padx= 10, pady = 5 ,sticky = 'e')
 
+        #FILTERS
+
+        self.label_filter_id = tk.Label(self,text='Buscar C.C: ')
+        self.label_filter_id.config(config)
+        self.label_filter_id.grid(column = 3, row = 1, padx= 10, pady = 5 ,sticky = 'e')
+        
+        self.label_filter_name = tk.Label(self,text='Buscar Nombre: ')
+        self.label_filter_name.config(config)
+        self.label_filter_name.grid(column = 3, row = 2, padx= 10, pady = 5 ,sticky = 'e')
+        
         #INPUTS
 
+        self.input_filter_id = tk.Entry(self, textvariable = tk.StringVar())
+        self.input_filter_id.config(width = 30 , font = ('Roboto',15))
+        self.input_filter_id.grid(column = 4 , row = 1 ,padx = 10 , pady = 5,columnspan = 2 )
+
+        self.input_filter_name = tk.Entry(self, textvariable = tk.StringVar())
+        self.input_filter_name.config(width = 30 , font = ('Roboto',15))
+        self.input_filter_name.grid(column = 4 , row = 2 ,padx = 10 , pady = 5 ,columnspan = 2)
+
         self.input_id_card = tk.Entry(self, textvariable = tk.StringVar())
-        self.input_id_card.config(width = 30 , font = ('Roboto',15))
+        self.input_id_card.config(width = 50 , font = ('Roboto',15))
         self.input_id_card.grid(column = 1 , row = 1 ,padx = 10 , pady = 5,columnspan = 2)
 
         self.input_name = tk.Entry(self, textvariable = tk.StringVar())
-        self.input_name.config(width = 30 , font = ('Roboto',15))
+        self.input_name.config(width = 50 , font = ('Roboto',15))
         self.input_name.grid(column = 1 , row = 2 ,padx = 10 , pady = 5 ,columnspan = 2)
 
         self.input_birth = tk.Entry(self, textvariable = tk.StringVar())
-        self.input_birth.config(width = 30 , font = ('Roboto',15))
+        self.input_birth.config(width = 50 , font = ('Roboto',15))
         self.input_birth.grid(column = 1 , row = 3 ,padx = 10 , pady = 5,columnspan = 2)
 
         self.input_phone = tk.Entry(self, textvariable = tk.StringVar())
-        self.input_phone.config(width = 30 , font = ('Roboto',15))
+        self.input_phone.config(width = 50 , font = ('Roboto',15))
         self.input_phone.grid(column = 1 , row = 4 ,padx = 10 , pady = 5,columnspan = 2)
 
         self.input_job = tk.Entry(self, textvariable = tk.StringVar())
-        self.input_job.config(width = 30 , font = ('Roboto',15))
+        self.input_job.config(width = 50 , font = ('Roboto',15))
         self.input_job.grid(column = 1 , row = 5 ,padx = 10 , pady = 5,columnspan = 2)
 
         self.input_gender = tk.Entry(self, textvariable = tk.StringVar())
-        self.input_gender.config(width = 30 , font = ('Roboto',15))
+        self.input_gender.config(width = 50 , font = ('Roboto',15))
         self.input_gender.grid(column = 1 , row = 6 ,padx = 10 , pady = 5,columnspan = 2)
 
         self.input_background = tk.Entry(self, textvariable = tk.StringVar())
-        self.input_background.config(width = 30 , font = ('Roboto',15))
+        self.input_background.config(width = 50 , font = ('Roboto',15))
         self.input_background.grid(column = 1 , row = 7 ,padx = 10 , pady = 5,columnspan = 2)
 
         #BUTTONS
 
         self.add = tk.Button(self,text='NUEVO PACIENTE',command = self.patient_save)
-        self.add.config(width = 20, font = ('Roboto',12,'bold'),fg = '#fff' , bg ='#158645',
+        self.add.config(width = 20, font = ('Roboto',12,'bold'),fg = '#fff' , bg ='#77dd77',
                         cursor='hand2', activebackground='#358d6f')
         self.add.grid(column = 0,row = 8, padx=10,pady=5)
 
         self.save = tk.Button(self,text='GUARDAR CAMBIOS', command = self.patient_save)
-        self.save.config(width = 20, font = ('Roboto',12,'bold'),fg = '#fff' , bg ='#0737ba',
+        self.save.config(width = 20, font = ('Roboto',12,'bold'),fg = '#fff' , bg ='#84b6f4',
                         cursor='hand2', activebackground='#4574f7')
         self.save.grid(column =1 ,row = 8, padx=10,pady=5)
 
         self.cancel = tk.Button(self,text='CANCELAR')
-        self.cancel.config(width = 20, font = ('Roboto',12,'bold'),fg = '#fff' , bg ='#b0020d',
+        self.cancel.config(width = 20, font = ('Roboto',12,'bold'),fg = '#fff' , bg ='#ff6961',
                         cursor='hand2', activebackground='#c43740')
         self.cancel.grid(column = 2 ,row = 8, padx=10,pady=5)
+
+        self.search = tk.Button(self,text='BUSCAR PACIENTE', command = self.condition_search)
+        self.search.config(width = 20 , font = ('Roboto',12,'bold'),fg = '#fff' , bg ='#a48fc6',
+                        cursor='hand2', activebackground='#8672a7')
+        self.search.grid(column = 4 ,row = 3, padx=10,pady=5 , sticky = 'e')
+   
+    def condition_search(self):
+        where = ''
+        self.input_filter_id = self.input_filter_id.get() 
+        self.input_filter_name = self.input_filter_name.get() 
+        
+        if self.input_filter_name != '':
+            where = f'name LIKE "%{self.input_filter_name}%"'
+        elif self.input_filter_id != '':
+            where = f'id_card LIKE "%{self.input_filter_name}%"'
+        elif self.input_filter_name != '' and self.input_filter_id != '':
+            where = f'id_card LIKE "%{self.input_filter_id}%" and name LIKE "%{self.input_filter_name}%"'
+        
+        search_condition(where)
+        self.inputs_patient()
+        self.patients_table(where)
+
 
     def patient_save(self):
         patient = Patient(
@@ -163,9 +203,12 @@ class Frame(tk.Frame):
                                     ),
                               tags=('evenrow',)
                              )
+
+        #BUTTONS BOTTOM
+
         self.edit_patient = tk.Button(self,text='EDITAR PACIENTE' ,command = self.edit)
         self.edit_patient.config(width = 20, font = ('Roboto',12,'bold'),fg = '#fff', 
-                                 bg ='#1e0075',
+                                 bg ='#6578a3',
                                  cursor='hand2', activebackground='#9379e0'
                                  )
         self.edit_patient.grid(row = 11,column = 0,padx = 10, pady = 5)

@@ -6,6 +6,7 @@ def main():
     root.title('Dra. Pili Historia Medica')
     icon = tk.PhotoImage(file='media/dra_pili.png')
     root.iconphoto(True,icon)
+    # root.iconbitmap('media/dra_pili.ico')
     app = Frame(root)
     app.inputs_patient()
 

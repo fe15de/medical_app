@@ -4,7 +4,6 @@ from tkinter import messagebox
 
 def uptade_patient(patient,id):
 
-
     connection = DBconnection()
     sql = f"""UPDATE Patient SET 
              birth = '{patient.birth}', 
@@ -32,9 +31,9 @@ def uptade_patient(patient,id):
         title = 'Editar Paciente'
         message = 'Paciente Editado Exitosamente'
         messagebox.showinfo(title,message)
-    except Exception as e:
+    except :
         title = 'Editar Paciente'
-        message = f'Error al Editar Paciente {e}'
+        message = 'Error al Editar Paciente' 
         messagebox.showerror(title,message)
 
 def save_patient(patient):
@@ -96,9 +95,11 @@ def search_condition(where):
             (strftime('%m-%d', 'now') < strftime('%m-%d', birth)) AS Edad
             , birth , id_patient
             FROM Patient
-            WHERE {where}
             """
 
+    if where != '':
+        sql+= f' WHERE {where}'
+    
     try:
         connection.cur.execute(sql)
         array_patients = connection.cur.fetchall()
@@ -108,7 +109,7 @@ def search_condition(where):
         title = 'DATOS'
         message = 'No existen Registros'
         messagebox.showwarning(title,message)
-
+    
     return array_patients
 
 class Patient:
