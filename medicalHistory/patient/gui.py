@@ -1,6 +1,9 @@
 import tkinter as tk
 from tkinter import ttk,scrolledtext, Toplevel
 from model.patient import *
+import tkcalendar as tc
+from tkcalendar import *
+from datetime import datetime
 
 pink = '#f9e7ed'
 
@@ -122,7 +125,62 @@ class Frame(tk.Frame):
         self.search.config(width = 20 , font = ('Roboto',12,'bold'),fg = '#fff' , bg ='#a48fc6',
                         cursor='hand2', activebackground='#8672a7')
         self.search.grid(column = 4 ,row = 3, padx=10,pady=5 , sticky = 'e')
+        
+        self.calendar = tk.Button(self,text='CALENDARIO', command = self.calendar_view)
+        self.calendar.config(width = 10, font = ('Roboto',12,'bold'),fg = '#fff' , bg ='#bc98f3',
+                        cursor='hand2', activebackground='#8672a7')
+        self.calendar.grid(column = 2 ,row = 3, padx=10,pady=5 , sticky = 'e')
    
+    def calendar_view(self):
+        view = Toplevel()
+        view.title('CALENDARIO')
+        view.config(bg=pink)  
+        current_year = datetime.now().year
+        input_date = tk.StringVar(value='1960-01-01')
+
+        def update_calendar():
+            selected_year = int(year_combobox.get())
+            selected_month = month_combobox.current() + 1
+            cal.selection_set(f"{selected_year}-{selected_month:02d}-01")
+        
+        cal = Calendar(view, selectmode='day', locale='es_US',
+                    background='#fff', foreground='#bc98f3',
+                    headersbackground='#f5d5e5',weekendbackground='#fce4ec',
+                    weekendforeground='#bc98f3', othermonthbackground='#f5d5e5',
+                    othermonthwebackground='#fce4ec',font=('Roboto', 12), 
+                    selectbackground='#c6a2af',selectforeground='#000', 
+                    normalbackground='#fff',normalforeground='#bc98f3', borderwidth=2,
+                    textvariable=input_date, date_pattern='yyyy-mm-dd')
+        cal.grid(row=1, column=0, padx=20, pady=20, columnspan=2, ipadx=30, ipady=30)
+        
+
+        years = list(range(1920, current_year+1))  
+        year_combobox = ttk.Combobox(view, values=years, state="readonly", width=5, font=('Roboto', 12,'bold'))
+        year_combobox.set(1960)  
+        year_combobox.grid(row=0, column=1, padx=10)
+
+        months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
+        month_combobox = ttk.Combobox(view, values=months, state="readonly", width=10, font=('Roboto', 12,'bold'))
+        month_combobox.set("Enero")
+        month_combobox.grid(row=0, column=0, padx=10)
+
+        update_button = tk.Button(view, text="Actualizar", command=update_calendar)
+        update_button.config(font=('Roboto', 12, 'bold'), fg='#fff', bg='#77dd77',
+                         cursor='hand2', activebackground='#358d6f')
+        update_button.grid(row=0, column=2, padx=10,pady=5)
+
+        def get_selected_date():
+            input_date.set(cal.get_date())
+            self.input_birth.delete(0,tk.END)
+            self.input_birth.insert(0,cal.get_date())
+            view.destroy()
+
+        confirm_button = tk.Button(view, text="Confirmar Fecha", command=get_selected_date)
+        confirm_button.config(font=('Roboto', 12, 'bold'), fg='#fff', bg='#84b6f4',
+                         cursor='hand2', activebackground='#4574f7')
+        confirm_button.grid(row=2, column=0, columnspan=2, padx=10, pady=10)
+
+
     def condition_search(self):
         where = ''
         self.input_filter_id = self.input_filter_id.get() 
@@ -131,7 +189,7 @@ class Frame(tk.Frame):
         if self.input_filter_name != '':
             where = f'name LIKE "%{self.input_filter_name}%"'
         elif self.input_filter_id != '':
-            where = f'id_card LIKE "%{self.input_filter_name}%"'
+            where = f'id_card LIKE "%{self.input_filter_id}%"'
         elif self.input_filter_name != '' and self.input_filter_id != '':
             where = f'id_card LIKE "%{self.input_filter_id}%" and name LIKE "%{self.input_filter_name}%"'
         
@@ -204,7 +262,7 @@ class Frame(tk.Frame):
                               tags=('evenrow',)
                              )
 
-        #BUTTONS BOTTOM
+        #BUTTONS ON THE BOTTOM
 
         self.edit_patient = tk.Button(self,text='EDITAR PACIENTE' ,command = self.edit)
         self.edit_patient.config(width = 20, font = ('Roboto',12,'bold'),fg = '#fff', 
@@ -219,6 +277,13 @@ class Frame(tk.Frame):
                                  cursor='hand2', activebackground='#a7ebeb'
                                  )
         self.history_patient.grid(row = 11,column = 1,padx = 10, pady = 5)
+        
+        self.close = tk.Button(self,text='CERRAR VENTANA', command = self.root.destroy)
+        self.close.config(width = 20, font = ('Roboto',12,'bold'),fg = '#fff', 
+                                 bg ='#a62520',
+                                 cursor='hand2', activebackground='#ff6961'
+                                 )
+        self.close.grid(row = 11,column = 4,padx = 10, pady = 5)
 
     def edit(self):
         try:
@@ -244,5 +309,6 @@ class Frame(tk.Frame):
             title = 'EDITAR PACIENTE'
             message = 'Error al editar paciente' 
             messagebox.showerror(title,message)
+
 
 

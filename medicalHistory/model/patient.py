@@ -20,7 +20,7 @@ def uptade_patient(patient,id):
         or patient.id_card == '' or patient.background == '' or id == None):
 
         title = 'Editar Paciente'
-        message = 'Error al Editar Paciente'
+        message = 'Error al Editar Paciente \n Faltan datos por ingresar'
         messagebox.showerror(title,message)
         return
 
@@ -48,7 +48,7 @@ def save_patient(patient):
         or patient.id_card == '' or patient.background == ''):
 
         title = 'Registrar Paciente'
-        message = 'Error al Registrar Paciente'
+        message = 'Error al Registrar Paciente \n Faltan datos por ingresar'
         messagebox.showerror(title,message)
         return
 
