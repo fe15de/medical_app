@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk,scrolledtext, Toplevel
 from model.patient import *
+from model.history import *
 import tkcalendar as tc
 from tkcalendar import *
 from datetime import datetime
@@ -20,6 +21,7 @@ class Frame(tk.Frame):
         self.root = root
         self.pack()
         self.config(bg=pink)
+        self.root.config(bg=pink)
         self.old_id = None
         self.inputs_patient()
         self.patients_table()
@@ -116,7 +118,7 @@ class Frame(tk.Frame):
                         cursor='hand2', activebackground='#4574f7')
         self.save.grid(column =1 ,row = 8, padx=10,pady=5)
 
-        self.cancel = tk.Button(self,text='CANCELAR')
+        self.cancel = tk.Button(self,text='CANCELAR', command=self.reset_inputs)
         self.cancel.config(width = 20, font = ('Roboto',12,'bold'),fg = '#fff' , bg ='#ff6961',
                         cursor='hand2', activebackground='#c43740')
         self.cancel.grid(column = 2 ,row = 8, padx=10,pady=5)
@@ -130,7 +132,12 @@ class Frame(tk.Frame):
         self.calendar.config(width = 10, font = ('Roboto',12,'bold'),fg = '#fff' , bg ='#bc98f3',
                         cursor='hand2', activebackground='#8672a7')
         self.calendar.grid(column = 2 ,row = 3, padx=10,pady=5 , sticky = 'e')
-   
+
+    #FUNCTIONS FOR TOP BUTTONS
+    
+    def reset_inputs(self):
+        self.inputs_patient()
+    
     def calendar_view(self):
         view = Toplevel()
         view.title('CALENDARIO')
@@ -216,6 +223,8 @@ class Frame(tk.Frame):
         self.inputs_patient()
         self.patients_table()
 
+    # SHOWS A TABLE WITH PATIENTS  
+
     def patients_table(self,where = ''):
 
         if where != '':
@@ -271,7 +280,7 @@ class Frame(tk.Frame):
                                  )
         self.edit_patient.grid(row = 11,column = 0,padx = 10, pady = 5)
  
-        self.history_patient = tk.Button(self,text='VER HISTORIAL PACIENTE')
+        self.history_patient = tk.Button(self,text='VER HISTORIAL PACIENTE',command=self.medical_history)
         self.history_patient.config(width = 20, font = ('Roboto',12,'bold'),fg = '#fff', 
                                  bg ='#007c79',
                                  cursor='hand2', activebackground='#a7ebeb'
@@ -285,6 +294,8 @@ class Frame(tk.Frame):
                                  )
         self.close.grid(row = 11,column = 4,padx = 10, pady = 5)
 
+    #FUNCTIONS FOR BOTTOM BUTTONS
+    
     def edit(self):
         try:
             self.id_card = self.table.item(self.table.selection())['text']
@@ -307,8 +318,110 @@ class Frame(tk.Frame):
 
         except :
             title = 'EDITAR PACIENTE'
-            message = 'Error al editar paciente' 
+            message = 'Error al editar paciente \n No hay Paciente Seleccionado' 
+            messagebox.showerror(title,message)
+
+    def medical_history(self):
+
+        try:
+              
+            self.id_card= self.table.item(self.table.selection())['text']
+            if not self.id_card:
+                title = 'HISTORIA PACIENTE'
+                message = 'Error al mostrar historial \n No hay Paciente Seleccionado' 
+                messagebox.showerror(title,message)
+                return
+            mh_view = Toplevel()
+            mh_view.title(' HISTORIAL MEDICO')
+            mh_view.config(bg=pink)
+
+            history = show_history(self.id_card)
+
+            self.table_history = ttk.Treeview(mh_view,column = ('Cedula','Nombre','Fecha Visita',
+                                                    'Motivo Consulta','Revision x Sistemas',
+                                                    'TA', 'FC','FR','Peso','Talla','SAO2',
+                                                    'Diagnostico','Tratamiento',
+                                                    'Analisis Medico'
+                                                    )
+                                    )
+            self.table_history.grid(column = 0 ,row = 0, columnspan = 11,sticky = 'nse')
+            
+            self.scroll_history = ttk.Scrollbar(mh_view, orient = 'vertical',command = self.table_history.yview)
+            self.scroll_history.grid(row = 0 , column = 11 ,sticky = 'nse')
+
+            self.table_history.configure(yscrollcommand = self.scroll_history.set)
+
+            self.table_history.tag_configure('evenrow',background = '#c5eafe')
+
+            self.table_history.heading('#0' ,text='C.C')
+            self.table_history.heading('#1' ,text='Nombre')
+            self.table_history.heading('#2' ,text='Fecha Visita')
+            self.table_history.heading('#3' ,text='Motivo Consulta')
+            self.table_history.heading('#4' ,text='Revision x Sistemas')
+            self.table_history.heading('#5' ,text='TA')
+            self.table_history.heading('#6' ,text='FC')
+            self.table_history.heading('#7' ,text='FR')
+            self.table_history.heading('#8' ,text='Peso')
+            self.table_history.heading('#9' ,text='Talla')
+            self.table_history.heading('#10' ,text='SAO2')
+            self.table_history.heading('#11' ,text='Diagnostico')
+            self.table_history.heading('#12' ,text='Tratamiento')
+            self.table_history.heading('#13' ,text='Analisis Medico')
+
+            self.table_history.column('#0', anchor=tk.CENTER, width=100, stretch=False)
+            self.table_history.column('#1', anchor=tk.CENTER, width=100, stretch=False)
+            self.table_history.column('#2', anchor=tk.CENTER, width=100, stretch=False)
+            self.table_history.column('#3', anchor=tk.CENTER, width=180, stretch=False)
+            self.table_history.column('#4', anchor=tk.CENTER, width=150, stretch=False)
+            self.table_history.column('#5', anchor=tk.CENTER, width=80, stretch=False)
+            self.table_history.column('#6', anchor=tk.CENTER, width=80, stretch=False)
+            self.table_history.column('#7', anchor=tk.CENTER, width=80, stretch=False)
+            self.table_history.column('#8', anchor=tk.CENTER, width=80, stretch=False)
+            self.table_history.column('#9', anchor=tk.CENTER, width=80, stretch=False)
+            self.table_history.column('#10', anchor=tk.CENTER, width=80, stretch=False)
+            self.table_history.column('#11', anchor=tk.CENTER, width=150, stretch=False)
+            self.table_history.column('#12', anchor=tk.CENTER, width=150, stretch=False)
+            self.table_history.column('#13', anchor=tk.CENTER, width=150, stretch=False)
+
+            for data in history:
+                self.table_history.insert('',0,text=data[0], 
+                                values=(
+                                        data[1],data[2],data[3],
+                                        data[4],data[5],data[6],data[7],
+                                        data[8],data[9],data[10],
+                                        data[11],data[12],data[13]
+                                        ),
+                                tags=('evenrow',)
+                                )
+
+
+            add = tk.Button(mh_view,text='AGREGAR HISTORIA' command = self.view_add_history)
+            add.config(width = 20, font = ('Roboto',12,'bold'),fg = '#fff' , bg ='#77dd77',
+                            cursor='hand2', activebackground='#358d6f')
+            add.grid(column = 0,row = 8, padx=10,pady=5)
+         
+            edit_history= tk.Button(mh_view,text='EDITAR HISTORIA' )
+            edit_history.config(width = 20, font = ('Roboto',12,'bold'),fg = '#fff', 
+                                    bg ='#6578a3',
+                                    cursor='hand2', activebackground='#9379e0'
+                                    )
+            edit_history.grid(row =8 ,column = 1,padx = 10, pady = 5)
+        
+            close = tk.Button(mh_view,text='SALIR', command = mh_view.destroy)
+            close.config(width = 20, font = ('Roboto',12,'bold'),fg = '#fff', 
+                                    bg ='#a62520',
+                                    cursor='hand2', activebackground='#ff6961'
+                                    )
+            close.grid(row = 8,column = 4,padx = 10, pady = 5)
+        except:
+            title = 'HISTORIA PACIENTE'
+            message = 'Error al mostrar historial \n No hay Paciente Seleccionado' 
             messagebox.showerror(title,message)
 
 
+    def view_add_history(self):
+
+        view = Toplevel()
+        view.title('AGREGAR HISTORIA')
+        view.config(bg = pink)
 

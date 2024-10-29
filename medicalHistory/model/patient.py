@@ -72,7 +72,7 @@ def show_patients():
     sql =  f""" SELECT id_card ,name ,job,phone,gender,background,
             (strftime('%Y', 'now') - strftime('%Y', birth)) - 
             (strftime('%m-%d', 'now') < strftime('%m-%d', birth)) AS Edad,
-            birth, id_patient
+            birth
             FROM Patient
             """
     try:
@@ -93,7 +93,7 @@ def search_condition(where):
     sql =  f""" SELECT id_card ,name ,job,phone,gender,background,
             (strftime('%Y', 'now') - strftime('%Y', birth)) - 
             (strftime('%m-%d', 'now') < strftime('%m-%d', birth)) AS Edad
-            , birth , id_patient
+            , birth 
             FROM Patient
             """
 
