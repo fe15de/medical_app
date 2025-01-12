@@ -1,9 +1,9 @@
 from model.dbconn import DBconnection
 from tkinter import messagebox
 
-def save(history):
+def history_save(history):
     
-    conn = DBconnection()
+    connection = DBconnection()
     sql = f""" INSERT INTO Consult (id_patient,day_of_visit,complaint,review,blood_pressure,heart_rate,respiratory_rate,weight,height,oxygen_saturation,diagnosis,treatment,assessment) 
               VALUES 
               ( 
@@ -31,9 +31,9 @@ def save(history):
         title = 'Historia Clinica'
         message = 'Historia Clinica Registrada Exitosamente'
         messagebox.showinfo(title,message)
-    except:
+    except Exception as e :
         title = 'Historia Clinica'
-        message = 'Error al Registrar Historia Clinica'
+        message = f'Error al Registrar Historia Clinica {e}'
         messagebox.showerror(title,message)
 
 
@@ -46,7 +46,6 @@ def show_history(id):
           ON h.id_patient = p.id_card
           WHERE p.id_card = {id}
            """ 
-    print(id)
   
     try:
         connection.cur.execute(sql)
@@ -60,6 +59,81 @@ def show_history(id):
 
     return history_array 
 
+
+def all_cie():
+    data = []
+    connection = DBconnection()
+    sql = f""" SELECT code , name FROM CIE10 ORDER BY code DESC"""
+    try:
+        connection.cur.execute(sql)
+        data  = connection.cur.fetchall()
+        connection.close_connection()
+      
+    except Exception as e:
+        title = 'CIE10'
+        message = f'No existen Registros {e}'
+        messagebox.showwarning(title,message)
+
+    return data 
+
+def search_cie(where):
+    connection = DBconnection()
+    array_patients = []
+    
+    sql =  """ SELECT code, name FROM CIE10 
+        """
+
+    if where != '':
+        sql+= f' WHERE {where}'
+    
+    try:
+        connection.cur.execute(sql)
+        array_patients = connection.cur.fetchall()
+        connection.close_connection()
+      
+    except:
+        title = 'DATOS'
+        message = 'No existen Registros'
+        messagebox.showwarning(title,message)
+    
+    return array_patients
+
+def all_medicines():
+    data = []
+    connection = DBconnection()
+    sql = f""" SELECT ViaAdministracion,Nombre,Concentracion,UnidadMedida FROM Medicamentos"""
+    try:
+        connection.cur.execute(sql)
+        data  = connection.cur.fetchall()
+        connection.close_connection()
+      
+    except Exception as e:
+        title = 'CIE10'
+        message = f'No existen Registros {e}'
+        messagebox.showwarning(title,message)
+
+    return data 
+
+def search_medicine(where):
+    connection = DBconnection()
+    array_patients = []
+    
+    sql = f""" SELECT ViaAdministracion,Nombre,Concentracion,UnidadMedida FROM Medicamentos"""
+
+    if where != '':
+        sql+= f' WHERE {where}'
+    
+    try:
+        connection.cur.execute(sql)
+        array_patients = connection.cur.fetchall()
+        connection.close_connection()
+      
+    except:
+        title = 'DATOS'
+        message = 'No existen Registros'
+        messagebox.showwarning(title,message)
+    
+    return array_patients
 
 class MedicalHistory:
     
