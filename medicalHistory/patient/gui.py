@@ -431,7 +431,7 @@ class Frame(tk.Frame):
             label = tk.Label(view, text=label_text, font=('Roboto', 12, 'bold'), bg=pink)
             label.grid(row=i, column=0, padx=10, pady=5, sticky='e')
             
-            entry = tk.Entry(view, font=('Roboto', 12))
+            entry = tk.Entry(view, font=('Roboto', 12), width = 80)
             entry.grid(row=i, column=1, padx=10, pady=5, sticky='w', columnspan = 3)
             entries.append(entry)
 
@@ -450,10 +450,15 @@ class Frame(tk.Frame):
                         cursor='hand2', activebackground='#358d6f')
         medicines.grid(row=len(labels), column=2, padx=10, pady=10, sticky='e')
         
+        test = tk.Button(view, text='EXAMENES LAB', command = self.show_exams)
+        test.config(width=15, font=('Roboto', 12, 'bold'), fg='#fff', bg='#4c73ce',
+                        cursor='hand2', activebackground='#358d6f')
+        test.grid(row=len(labels), column=3, padx=10, pady=10, sticky='e')
+        
         cancel_button = tk.Button(view, text='SALIR', command=view.destroy)
         cancel_button.config(width=15, font=('Roboto', 12, 'bold'), fg='#fff', bg='#ff6961',
                             cursor='hand2', activebackground='#c43740')
-        cancel_button.grid(row=len(labels), column=4, padx=10, pady=10, sticky='w')
+        cancel_button.grid(row=len(labels), column=5, padx=10, pady=10, sticky='w')
 
 
     def save_history(self,entries,date,id):
@@ -538,7 +543,6 @@ class Frame(tk.Frame):
         self.cie_table(where)
 
     def cie_table(self, where=''):
-        # Eliminar cualquier tabla existente antes de crear una nueva
         for widget in self.history_view.winfo_children():
             if isinstance(widget, ttk.Treeview):
                 widget.destroy()
@@ -601,7 +605,6 @@ class Frame(tk.Frame):
         self.medicines_table(where)
 
     def medicines_table(self, where=''):
-        # Eliminar cualquier tabla existente antes de crear una nueva
         for widget in self.medicines_view.winfo_children():
             if isinstance(widget, ttk.Treeview):
                 widget.destroy()
@@ -622,9 +625,9 @@ class Frame(tk.Frame):
         table.tag_configure('evenrow', background='#c5eafe')
 
         table.heading('#0', text='Codigo')
-        table.heading('#2', text='Nombre')
-        table.heading('#3', text='Concentracion')
-        table.heading('#4', text='Unidad Medida')
+        table.heading('#1', text='Nombre')
+        table.heading('#2', text='Concentracion')
+        table.heading('#3', text='Unidad Medida')
 
         table.column('#0', anchor=tk.CENTER, width=150, stretch=False)
         table.column('#1', anchor=tk.CENTER, width=1050, stretch=False)
@@ -633,3 +636,60 @@ class Frame(tk.Frame):
 
         for data in elements:
             table.insert('', 'end', text=data[0], values=(data[1], data[2],data[3]), tags=('evenrow',))
+    
+    def show_exams(self):
+        self.history_view_exams = Toplevel()
+        self.history_view_exams.title('Examenes de Laboratorio')
+        self.history_view_exams.config(bg=pink)
+        
+        search_code= tk.Label(self.history_view_exams,text='Nombre: ')
+        search_code.config(config)
+        search_code.grid(column = 4, row = 1, padx= 10, pady = 5 ,sticky = 'e')
+        
+        self.input_test= tk.Entry(self.history_view_exams, textvariable = tk.StringVar())
+        self.input_test.config(width = 30 , font = ('Roboto',15))
+        self.input_test.grid(column = 5 , row = 1 ,padx = 10 , pady = 5,columnspan = 2 )
+        
+        search = tk.Button(self.history_view_exams,text='BUSCAR', command = self.condition_search_test)
+        search.config(width = 20 , font = ('Roboto',12,'bold'),fg = '#fff' , bg ='#a48fc6',
+                        cursor='hand2', activebackground='#8672a7')
+        search.grid(column = 5 ,row = 3, padx=10,pady=5 , sticky = 'e')
+        
+        self.test_table()
+    
+    def condition_search_test(self):
+        where = ''
+        code = self.input_test.get() 
+        
+        if code != '':
+            where = f'nombre LIKE "%{code}%"'
+        
+        search_test(where)
+        self.test_table(where)
+
+    def test_table(self, where=''):
+        for widget in self.history_view_exams.winfo_children():
+            if isinstance(widget, ttk.Treeview):
+                widget.destroy()
+
+        if where != '':
+            elements = search_test(where)
+        else:
+            elements = all_test()
+
+        table = ttk.Treeview(self.history_view_exams, columns=('Nombre'))
+        table.grid(column= 4, row=6, columnspan=7, sticky='nse')
+
+        scroll = ttk.Scrollbar(self.history_view_exams, orient='vertical', command=table.yview)
+        scroll.grid(row=6, column=17, sticky='nse')
+
+        table.configure(yscrollcommand=scroll.set)
+
+        table.tag_configure('evenrow', background='#c5eafe')
+
+        table.heading('#0', text='Nombre')
+
+        table.column('#0', anchor=tk.CENTER, width=300, stretch=False)
+
+        for data in elements:
+            table.insert('', 'end', text=data[0], tags=('evenrow',))

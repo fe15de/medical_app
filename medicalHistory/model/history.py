@@ -108,7 +108,7 @@ def all_medicines():
         connection.close_connection()
       
     except Exception as e:
-        title = 'CIE10'
+        title = 'Medicamentos'
         message = f'No existen Registros {e}'
         messagebox.showwarning(title,message)
 
@@ -119,6 +119,43 @@ def search_medicine(where):
     array_patients = []
     
     sql = f""" SELECT ViaAdministracion,Nombre,Concentracion,UnidadMedida FROM Medicamentos"""
+
+    if where != '':
+        sql+= f' WHERE {where}'
+    
+    try:
+        connection.cur.execute(sql)
+        array_patients = connection.cur.fetchall()
+        connection.close_connection()
+      
+    except:
+        title = 'DATOS'
+        message = 'No existen Registros'
+        messagebox.showwarning(title,message)
+    
+    return array_patients
+
+def all_test():
+    data = []
+    connection = DBconnection()
+    sql = f""" SELECT nombre FROM Examenes"""
+    try:
+        connection.cur.execute(sql)
+        data  = connection.cur.fetchall()
+        connection.close_connection()
+      
+    except Exception as e:
+        title = 'Examenes de Laboratorio'
+        message = f'No existen Registros {e}'
+        messagebox.showwarning(title,message)
+
+    return data 
+
+def search_test(where):
+    connection = DBconnection()
+    array_patients = []
+    
+    sql = f""" SELECT nombre FROM Examenes"""
 
     if where != '':
         sql+= f' WHERE {where}'
