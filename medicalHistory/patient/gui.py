@@ -362,9 +362,10 @@ class Frame(tk.Frame):
             self.table_history.heading('#6' ,text='Peso')
             self.table_history.heading('#7' ,text='Talla')
             self.table_history.heading('#8' ,text='SAO2')
-            self.table_history.heading('#9' ,text='Diagnostico')
-            self.table_history.heading('#10' ,text='Tratamiento')
-            self.table_history.heading('#11' ,text='Analisis Medico')
+            self.table_history.heading('#9' ,text='Hallazgos')
+            self.table_history.heading('#10' ,text='Diagnostico')
+            self.table_history.heading('#11' ,text='Tratamiento')
+            self.table_history.heading('#12' ,text='Analisis Medico')
 
             self.table_history.column('#0', anchor=tk.CENTER, width=100, stretch=False)
             self.table_history.column('#1', anchor=tk.CENTER, width=180, stretch=False)
@@ -375,16 +376,17 @@ class Frame(tk.Frame):
             self.table_history.column('#6', anchor=tk.CENTER, width=80, stretch=False)
             self.table_history.column('#7', anchor=tk.CENTER, width=80, stretch=False)
             self.table_history.column('#8', anchor=tk.CENTER, width=80, stretch=False)
-            self.table_history.column('#9', anchor=tk.CENTER, width=150, stretch=False)
-            self.table_history.column('#10', anchor=tk.CENTER, width=150, stretch=False)
+            self.table_history.column('#9', anchor=tk.CENTER, width= 400, stretch=False)
+            self.table_history.column('#10', anchor=tk.CENTER, width=180, stretch=False)
             self.table_history.column('#11', anchor=tk.CENTER, width=150, stretch=False)
+            self.table_history.column('#12', anchor=tk.CENTER, width=250, stretch=False)
 
             for data in history:
                 self.table_history.insert('',0,text=data[2], 
                                 values=(
                                         data[3],data[4],data[5],data[6],
                                         data[7],data[8],data[9],data[10],
-                                        data[11],data[12],data[13]
+                                        data[11],data[12],data[13],data[14]
                                         ),
                                 tags=('evenrow',)
                                 )
@@ -422,18 +424,37 @@ class Frame(tk.Frame):
         
         labels = [
         "Motivo Consulta", "Revisión x Sistemas", "TA", "FC", "FR", 
-        "Peso", "Talla", "SAO2", "Diagnóstico", "Tratamiento", "Análisis Médico"
+        "Peso", "Talla", "SAO2","Hallazgos", "Diagnóstico", "Tratamiento", "Análisis Médico"
     ]
         date = datetime.now().strftime('%Y-%m-%d')
         entries = []
-
+        n = 0
+        col = 0
+        r = 2
         for i, label_text in enumerate(labels):
-            label = tk.Label(view, text=label_text, font=('Roboto', 12, 'bold'), bg=pink)
-            label.grid(row=i, column=0, padx=10, pady=5, sticky='e')
             
-            entry = tk.Entry(view, font=('Roboto', 12), width = 80)
-            entry.grid(row=i, column=1, padx=10, pady=5, sticky='w', columnspan = 3)
-            entries.append(entry)
+            
+            if n >= 2 and n <= 7:
+                if n == 5:
+                    r += 1
+                    col = 0
+
+                label = tk.Label(view, text=label_text, font=('Roboto', 12, 'bold'), bg=pink)
+                label.grid(row=r, column=col, padx=10, pady=5, sticky='e')
+                
+                entry = tk.Entry(view, font=('Roboto', 12), width = 10)
+                entry.grid(row=r, column= col+1, padx=10, pady=5, sticky='w', columnspan = 1)
+                entries.append(entry)
+                col +=2
+            else:
+                label = tk.Label(view, text=label_text, font=('Roboto', 12, 'bold'), bg=pink)
+                label.grid(row=i, column=0, padx=10, pady=5, sticky='e') 
+                
+                entry = tk.Entry(view, font=('Roboto', 12), width = 80)
+                entry.grid(row=i, column=1, padx=10, pady=5, sticky='w', columnspan = 3)
+                entries.append(entry)
+            
+            n += 1
 
         save_button = tk.Button(view, text='GUARDAR', command=lambda: self.save_history(entries,date,self.id_card))
         save_button.config(width=15, font=('Roboto', 12, 'bold'), fg='#fff', bg='#77dd77',
@@ -474,9 +495,10 @@ class Frame(tk.Frame):
             entries[5].get(),
             entries[6].get(),
             entries[7].get(),
-            entries[8].get(),
             entries[9].get(),
-            entries[10].get()
+            entries[10].get(),
+            entries[11].get(),
+            entries[8].get()
         )
         history_save(history_data)
         for widget in entries[0].master.winfo_children():
@@ -495,7 +517,7 @@ class Frame(tk.Frame):
                 '', 0, text=data[2], 
                 values=(
                     data[3], data[4], data[5], data[6], data[7], data[8], 
-                    data[9], data[10], data[11], data[12], data[13]
+                    data[9], data[10], data[11], data[12], data[13], data[14]
                 ), tags=('evenrow',)
             )
     
