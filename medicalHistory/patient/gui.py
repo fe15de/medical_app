@@ -397,12 +397,12 @@ class Frame(tk.Frame):
                             cursor='hand2', activebackground='#358d6f')
             add.grid(column = 0,row = 8, padx=10,pady=5)
          
-            # edit_history= tk.Button(mh_view,text='EDITAR HISTORIA' )
-            # edit_history.config(width = 20, font = ('Roboto',12,'bold'),fg = '#fff', 
-            #                         bg ='#6578a3',
-            #                         cursor='hand2', activebackground='#9379e0'
-            #                         )
-            # edit_history.grid(row =8 ,column = 1,padx = 10, pady = 5)
+            edit_history= tk.Button(mh_view,text='VER HISTORIA' , command=self.view_selected_history)
+            edit_history.config(width = 20, font = ('Roboto',12,'bold'),fg = '#fff', 
+                                    bg ='#6578a3',
+                                    cursor='hand2', activebackground='#9379e0'
+                                    )
+            edit_history.grid(row =8 ,column = 1,padx = 10, pady = 5)
         
             close = tk.Button(mh_view,text='SALIR', command = mh_view.destroy)
             close.config(width = 20, font = ('Roboto',12,'bold'),fg = '#fff', 
@@ -715,3 +715,41 @@ class Frame(tk.Frame):
 
         for data in elements:
             table.insert('', 'end', text=data[0], tags=('evenrow',))
+
+
+    def view_selected_history(self):
+        try:
+            selected_item = self.table_history.selection()[0]
+            selected_data = self.table_history.item(selected_item)
+
+            vertical_view = Toplevel()
+            vertical_view.title('DETALLES DE LA VISITA')
+            vertical_view.config(bg=pink)
+
+            details = {
+                'Fecha Visita': selected_data['text'],
+                'Motivo Consulta': selected_data['values'][0],
+                'Revision x Sistemas': selected_data['values'][1],
+                'TA': selected_data['values'][2],
+                'FC': selected_data['text'][3],
+                'FR': selected_data['values'][4],
+                'Peso': selected_data['values'][5],
+                'Talla': selected_data['values'][6],
+                'SAO2': selected_data['text'][7],
+                'Hallazgos': selected_data['values'][8],
+                'Diagnostico': selected_data['values'][9],
+                'Tratamiento': selected_data['values'][10],
+                'Analisis Medico': selected_data['values'][11]
+            }
+
+            for i, (key, value) in enumerate(details.items()):
+                label = tk.Label(vertical_view, text=f"{key}:", font=('Roboto', 12, 'bold'), bg=pink)
+                label.grid(row=i, column=0, padx=10, pady=5, sticky='e')
+
+                value_label = tk.Label(vertical_view, text=value, font=('Roboto', 12), bg=pink)
+                value_label.grid(row=i, column=1, padx=10, pady=5, sticky='w')
+
+        except IndexError:
+            title = 'ERROR'
+            message = 'No se seleccionó ninguna visita médica.'
+            messagebox.showerror(title, message)
